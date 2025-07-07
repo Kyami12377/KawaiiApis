@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>🌸 API Kawaii 🌸</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #fceaff, #ffd6e8);
+      color: #c71585;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #sidebar {
+      background: #ffb6c1;
+      width: 260px;
+      min-width: 260px;
+      padding: 1.5rem 1rem;
+      box-shadow: 4px 0 15px #ff69b4aa;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 10;
+    }
+    #sidebar.closed { transform: translateX(-260px); }
+    #sidebar h2 {
+      margin-bottom: 1rem;
+      font-size: 1.7rem;
+      color: white;
+      text-align: center;
+    }
+    #sidebar button.close-btn {
+      position: absolute;
+      top: 15px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Scroll para o menu lateral */
+    #sidebar nav {
+      flex: 1;
+      overflow-y: auto;
+      max-height: calc(100vh - 100px);
+      scrollbar-width: thin;
+      scrollbar-color: #ff69b4 #ffb6c1;
+    }
+    #sidebar nav::-webkit-scrollbar {
+      width: 8px;
+    }
+    #sidebar nav::-webkit-scrollbar-track {
+      background: #ffc0cb88;
+      border-radius: 10px;
+    }
+    #sidebar nav::-webkit-scrollbar-thumb {
+      background-color: #ff69b4;
+      border-radius: 10px;
+    }
+
+    #sidebar nav ul { list-style: none; padding: 0; margin: 0; }
+    #sidebar nav ul li { margin: 0.8rem 0; }
+    #sidebar nav ul li a button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 0.6rem;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    #sidebar nav ul li a button:hover {
+      background-color: #ff69b4aa;
+    }
+    #main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    #openSidebarBtn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #ff69b4;
+      border: none;
+      color: white;
+      padding: 0.5rem 0.8rem;
+      font-size: 1.3rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff1493aa;
+      display: none;
+      z-index: 20;
+    }
+    #sidebar.closed ~ #openSidebarBtn { display: block; }
+    .vcard {
+      background: #fff0f6;
+      border: 2px solid #ffb6c1;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 420px;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px #ffc0cbaa;
+      text-align: center;
+    }
+    .vcard h2 {
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      color: #d6336c;
+    }
+    #ip-info {
+      background: #ffe6f0;
+      border: 2px solid #ff69b4;
+      border-radius: 15px;
+      padding: 1rem;
+      max-width: 420px;
+      box-shadow: 0 0 15px #ff69b4aa;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #d6336c;
+      text-align: center;
+    }
+    footer {
+      color: #d6336c;
+      font-size: 0.9rem;
+      font-style: italic;
+      text-align: center;
+    }
+    #welcomeBalloon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ffb6c1;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 20px #ff69b4cc;
+      font-weight: bold;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      animation: floatIn 0.5s ease forwards;
+      z-index: 9998;
+      max-width: 280px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes floatOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(20px); }
+    }
+    #supportBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 55px;
+      height: 55px;
+      background: #ffb6c1;
+      color: white;
+      border-radius: 50%;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px #25d366aa;
+      text-decoration: none;
+      animation: pulse 2.5s ease-in-out infinite;
+      z-index: 9999;
+    }
+    #supportBtn:hover { background: #ff69b4cc; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px #d6336c; }
+      50% { transform: scale(1.1); box-shadow: 0 0 25px #ff69b4cc; }
+    }
+    @media (max-width: 768px) {
+      body { flex-direction: column; height: auto; }
+      #sidebar { position: fixed; height: 100vh; }
+      .vcard, #ip-info { max-width: 95vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <button class="close-btn">×</button>
+    <h2>🌸 Menu API 🌸</h2>
+    <nav>
+      <ul>
+        <li><a href="/play?q=kawaii" target="_blank"><button>playaudio</button></a></li>
+        <li><a href="/playvid?q=kawaii" target="_blank"><button>playvideo</button></a></li>
+        <li><a href="/steamjogo?q=fifa" target="_blank"><button>streaming</button></a></li>
+        <li><a href="/amazon?q=mouse+gamer" target="_blank"><button>amazon</button></a></li>
+        <li><a href="/g1"target="_blank"><button>g1news</button></a></li>
+        <li><a href="/ia-voz?q=olá%20mundo|goku"target="_blank"><button>voipe-ia</button></a></li>
+        <li><a href="/pinterest?q=nezuko"target="_blank"><button>pinterest</button></a></li>
+        <li><a href="/gerarnick?q=kawaii" target="_blank"><button>fazernick</button></a></li>
+        <li><a href="/tiktokmp4?q=https://vm.tiktok.com/ZMSqpC1Jp/" target="_blank"><button>tiktokmp4</button></a></li>
+        <li><a href="/tiktokmp3?q=https://vm.tiktok.com/ZMSqpC1Jp/" target="_blank"><button>tiktokmp3</button></a></li>
+        <li><a href="/github/guiireal" target="_blank"><button>gitstalk</button></a></li>
+        <!-- Adicione quantas quiser que agora o menu tem scroll 😊 -->
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main id="main-content">
+    <div class="vcard">
+      <h2>🌸KAWAII APIS🌸</h2>
+      <h3>💬contato: +55 77 9100-9651</h3>
+      <h4>🎀desenvolvedor: KAMUI DEVS</h4>
+      <h5>🦄instagram: @kamui_7771</h5>  
+    </div>
+
+    <div id="ip-info"><strong>Seu IP:</strong> carregando...</div>
+
+    <footer></footer>
+  </main>
+
+  <!-- Botão abrir menu -->
+  <button id="openSidebarBtn">☰ Menu</button>
+
+  <!-- Balão de boas-vindas -->
+  <div id="welcomeBalloon">🌸 Bem-vindo à API Kawaii! 💕✨</div>
+
+  <!-- Botão de suporte flutuante -->
+  <a href="https://wa.me/557991009651?text=Preciso%20de%20suporte%20na%20API%20kawaii%20🌸" id="supportBtn" target="_blank" title="Suporte">💬</a>
+
+  <!-- Scripts -->
+  <script>
+    const sidebar = document.getElementById('sidebar')
+    const closeBtn = sidebar.querySelector('.close-btn')
+    const openBtn = document.getElementById('openSidebarBtn')
+    const welcomeBalloon = document.getElementById('welcomeBalloon')
+
+    closeBtn.addEventListener('click', () => {
+      sidebar.classList.add('closed')
+      openBtn.focus()
+    })
+    openBtn.addEventListener('click', () => {
+      sidebar.classList.remove('closed')
+      closeBtn.focus()
+    })
+
+    // Balão some depois de 6s
+    window.onload = () => {
+      fetchIP()
+      setTimeout(() => {
+        welcomeBalloon.style.animation = 'floatOut 0.5s ease forwards'
+        welcomeBalloon.addEventListener('animationend', () => {
+          welcomeBalloon.style.display = 'none'
+        }, { once: true })
+      }, 6000)
+    }
+
+    // IP
+    async function fetchIP() {
+      const ipDiv = document.getElementById('ip-info')
+      try {
+        const res = await fetch('https://api.ipify.org?format=json')
+        const data = await res.json()
+        ipDiv.innerHTML = `<strong>Seu IP:</strong> ${data.ip}`
+      } catch {
+        ipDiv.innerHTML = `<strong>Seu IP:</strong> não foi possível obter.`
+      }
+    }
+  </script>
+</body>
+</html>
